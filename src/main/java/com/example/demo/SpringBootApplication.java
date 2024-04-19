@@ -1,2 +1,4 @@
-package com.example.demo;public @interface SpringBootApplication {
+package com.example.demo;
+
+public @interface SpringBootApplication {
 }
