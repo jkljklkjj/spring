@@ -8,6 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+import static com.example.demo.Crawler.PoemCrawler.crawlPoem;
+
 @RestController
 public class AudioController {
     @PostMapping("/audio")
@@ -22,7 +24,7 @@ public class AudioController {
     }
 
     @GetMapping("/test")
-    public String test() {
-        return "Hello, World!";
+    public String test() throws IOException {
+        return crawlPoem("静夜思");
     }
 }
