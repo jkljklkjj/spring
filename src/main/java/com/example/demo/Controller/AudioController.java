@@ -23,8 +23,8 @@ public class AudioController {
         }
     }
 
-    @GetMapping("/test")
-    public String test() throws IOException {
-        return crawlPoem("静夜思");
+    @GetMapping("/poem")
+    public String Poem(@RequestParam String title) throws IOException {
+        return crawlPoem(title);
     }
 }

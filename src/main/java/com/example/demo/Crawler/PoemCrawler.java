@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-import static java.sql.DriverManager.println;
-
 public class PoemCrawler {
     public static String crawlPoem(String title) throws IOException {
         String FirstWord = title.substring(0, 1);
