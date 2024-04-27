@@ -27,4 +27,9 @@ public class AudioController {
     public String Poem(@RequestParam String title) throws IOException {
         return crawlPoem(title);
     }
+    @GetMapping("/test")
+    public String test() throws IOException {
+        System.out.println("test");
+        return crawlPoem("静夜思");
+    }
 }

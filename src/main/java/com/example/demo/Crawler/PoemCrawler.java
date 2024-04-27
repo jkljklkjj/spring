@@ -22,6 +22,6 @@ public class PoemCrawler {
         if (firstPoem != null) {
             poemContent = firstPoem.selectFirst(".contson");
         }
-        return poemContent.html();
+        return poemContent.text();
     }
 }
