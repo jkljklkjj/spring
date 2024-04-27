@@ -10,6 +10,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.File;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -17,12 +18,13 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class VoiceToText extends WebSocketListener {
+    public String result;
     private static final Logger logger = LoggerFactory.getLogger(VoiceToText.class);
     private static final String hostUrl = "https://iat-api.xfyun.cn/v2/iat"; //中英文，http url 不支持解析 ws/wss schema
     private static final String appid = "8203cacb";//appid、apiSecret、apiKey请自行获取
     private static final String apiSecret = "YTE4MjM3NWIwYzZkOTUxZWM2ZmY5NDFj";
     private static final String apiKey = "3e21246e8e7a82a4d73233bc7a929dc9";
-    private static final String file = "resource\\iat\\16k_10.pcm"; // 这个是音频文件的路径，需要配合前端
+    private String file; // 这个是音频文件的路径，需要配合前端
     public static final int StatusFirstFrame = 0;
     public static final int StatusContinueFrame = 1;
     public static final int StatusLastFrame = 2;
@@ -31,6 +33,14 @@ public class VoiceToText extends WebSocketListener {
     // 开始时间
     private static final Date dateBegin = new Date();
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd HH:mm:ss.SSS");
+
+    public void setFile(String file) {
+        //接收传输过来的文件路径
+        this.file = file;
+    }
+    public String getResult() {
+        return this.result;
+    }
 
     @Override
     public void onOpen(WebSocket webSocket, Response response) {
@@ -112,6 +122,7 @@ public class VoiceToText extends WebSocketListener {
         //接收服务器返回的结果
         super.onMessage(webSocket, text);
         System.out.println("服务器返回的结果："+text);
+        this.result = text;
         ResponseData resp = json.fromJson(text, ResponseData.class);
         if (resp != null) {
             if (resp.getCode() != 0) {
@@ -143,7 +154,7 @@ public class VoiceToText extends WebSocketListener {
                     decoder.discard();
                     webSocket.close(1000, "");
                 } else {
-                    // todo 根据返回的数据处理
+                    System.out.println("继续发送音频");
                 }
             }
         }
@@ -168,6 +179,18 @@ public class VoiceToText extends WebSocketListener {
     }
 
     public static void main(String[] args) throws Exception {
+        // 构建鉴权url
+        String authUrl = getAuthUrl(hostUrl, apiKey, apiSecret);
+        OkHttpClient client = new OkHttpClient.Builder().build();
+
+        String url = authUrl.replace("http://", "ws://").replace("https://", "wss://");
+        //System.out.println(url);
+        Request request = new Request.Builder().url(url).build();
+        // System.out.println(client.newCall(request).execute());
+        //System.out.println("url===>" + url);
+        WebSocket webSocket = client.newWebSocket(request, new VoiceToText());
+    }
+    public void run() throws Exception {
         // 构建鉴权url
         String authUrl = getAuthUrl(hostUrl, apiKey, apiSecret);
         OkHttpClient client = new OkHttpClient.Builder().build();
