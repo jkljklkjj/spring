@@ -37,8 +37,16 @@ public class AudioController {
         return voiceToText.getResult();
     }
 
+    @PostMapping("/audiotest")
+    public void up(@RequestParam("file") MultipartFile file) {
+        File tmpFile = new File("src/main/resources/audio");
+        System.out.println("音频上传成功");
+
+    }
+
     @GetMapping("/poem")
     public String Poem(@RequestParam String title) throws IOException {
+        System.out.println("接收到诗词请求");
         return crawlPoem(title);
     }
 
