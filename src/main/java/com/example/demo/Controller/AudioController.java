@@ -40,8 +40,8 @@ public class AudioController {
     @PostMapping("/audiotest")
     public void up(@RequestParam("file") MultipartFile file) {
         File tmpFile = new File("src/main/resources/audio");
+        if(!tmpFile.exists()) tmpFile.mkdirs();
         System.out.println("音频上传成功");
-
     }
 
     @GetMapping("/poem")

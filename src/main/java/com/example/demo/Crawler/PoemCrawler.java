@@ -22,6 +22,9 @@ public class PoemCrawler {
         if (firstPoem != null) {
             poemContent = firstPoem.selectFirst(".contson");
         }
-        return poemContent.text();
+        String text = poemContent.text();
+        String newText = text.replaceAll("\\(.*?\\)", "");
+        newText = newText.replaceAll(" ", "<br>");
+        return newText;
     }
 }
