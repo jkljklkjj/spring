@@ -10,21 +10,22 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.File;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 public class VoiceToText extends WebSocketListener {
-    public String result;
+    private static CountDownLatch latch;
+    private static String result;
+    private static final String file = "src/main/resources/audio/test.pcm"; // 中文
     private static final Logger logger = LoggerFactory.getLogger(VoiceToText.class);
     private static final String hostUrl = "https://iat-api.xfyun.cn/v2/iat"; //中英文，http url 不支持解析 ws/wss schema
     private static final String appid = "8203cacb";//appid、apiSecret、apiKey请自行获取
     private static final String apiSecret = "YTE4MjM3NWIwYzZkOTUxZWM2ZmY5NDFj";
     private static final String apiKey = "3e21246e8e7a82a4d73233bc7a929dc9";
-    private String file; // 这个是音频文件的路径，需要配合前端
     public static final int StatusFirstFrame = 0;
     public static final int StatusContinueFrame = 1;
     public static final int StatusLastFrame = 2;
@@ -34,12 +35,12 @@ public class VoiceToText extends WebSocketListener {
     private static final Date dateBegin = new Date();
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd HH:mm:ss.SSS");
 
-    public void setFile(String file) {
-        //接收传输过来的文件路径
-        this.file = file;
+    public void setLatch(CountDownLatch latch) {
+        VoiceToText.latch = latch;
     }
+
     public String getResult() {
-        return this.result;
+        return result;
     }
 
     @Override
@@ -47,7 +48,7 @@ public class VoiceToText extends WebSocketListener {
         super.onOpen(webSocket, response);
         new Thread(() -> {
             //连接成功，开始发送数据
-            int frameSize = 1280; //每一帧音频大小的整数倍，注意不同音频格式一帧大小字节数不同，要和前端协调好
+            int frameSize = 1280; //每一帧音频大小的整数倍，注意不同音频格式一帧大小字节数不同
             int intervel = 40;
             int status = 0;  // 音频的状态
             try (FileInputStream fs = new FileInputStream(file)) {
@@ -75,8 +76,8 @@ public class VoiceToText extends WebSocketListener {
                             business.addProperty("dwa", "wpgs");//动态修正
                             //填充data
                             data.addProperty("status", StatusFirstFrame);
-                            data.addProperty("format", "audio/L16;rate=16000");//音频采样率
-                            data.addProperty("encoding", "raw");//音频编码
+                            data.addProperty("format", "audio/L16;rate=16000");
+                            data.addProperty("encoding", "raw");
                             data.addProperty("audio", Base64.getEncoder().encodeToString(Arrays.copyOf(buffer, len)));
                             //填充frame
                             frame.add("common", common);
@@ -121,8 +122,6 @@ public class VoiceToText extends WebSocketListener {
     public void onMessage(WebSocket webSocket, String text) {
         //接收服务器返回的结果
         super.onMessage(webSocket, text);
-        System.out.println("服务器返回的结果："+text);
-        this.result = text;
         ResponseData resp = json.fromJson(text, ResponseData.class);
         if (resp != null) {
             if (resp.getCode() != 0) {
@@ -136,7 +135,6 @@ public class VoiceToText extends WebSocketListener {
                     //System.out.println(te.toString());
                     try {
                         decoder.decode(te);
-                        System.out.println("中间识别结果 ==》" + decoder.toString());
                     } catch (Exception e) {
                         logger.error("Exception:", e);
                     }
@@ -150,11 +148,11 @@ public class VoiceToText extends WebSocketListener {
                     System.out.println(sdf.format(dateEnd) + "结束");
                     System.out.println("耗时:" + (dateEnd.getTime() - dateBegin.getTime()) + "ms");
                     System.out.println("最终识别结果 ==》" + decoder.toString());
+                    result = decoder.toString();
+                    latch.countDown();
                     System.out.println("本次识别sid ==》" + resp.getSid());
                     decoder.discard();
                     webSocket.close(1000, "");
-                } else {
-                    System.out.println("继续发送音频");
                 }
             }
         }
