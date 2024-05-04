@@ -47,9 +47,8 @@ public class AudioController {
             return "Error occurred while running VoiceToText";
         }
         String result = voiceToText.getResult();
-        Evaluator evaluator = new Evaluator();
-        String Result = evaluator.run(content, result);
-        return Result;
+        String Result = Evaluator.run(content, result);
+        return Result+" "+result;
     }
 
     @PostMapping("/audiotest")

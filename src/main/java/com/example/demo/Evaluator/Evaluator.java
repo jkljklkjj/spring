@@ -64,7 +64,6 @@ public class Evaluator {
         }
 
         for(int i = 0;i<result.length();i++){
-            char s = result.charAt(i);
             if(indexes.contains(i)){
                 strList.set(i, "(" + strList.get(i) + ")");
             }
@@ -101,14 +100,13 @@ public class Evaluator {
 
     public static void main(String[] args) {
         //新知识点：可以在一个类里面直接创建主函数来进行测试
-        Evaluator evaluator = new Evaluator();
         String content = "白日依山尽，黄河入海流。欲穷千里目，更上一层楼。";
         String result = "白日依山尽。黄河入海流，欲穷千里目，哈上一层楼。";//这里是背诵结果
-        System.out.println(evaluator.PoemEvaluateRate(result, content));
+        System.out.println(PoemEvaluateRate(result, content));
 
-        System.out.println(evaluator.PinyinTransform(content));
-        List<String> pinyinList = evaluator.PinyinTransform(content);
-        List<String> hapinyinList = evaluator.PinyinTransform(result);
+        System.out.println(PinyinTransform(content));
+        List<String> pinyinList = PinyinTransform(content);
+        List<String> hapinyinList = PinyinTransform(result);
         List<Integer> index = getMatchingIndexes(pinyinList, hapinyinList);
         System.out.println(index);
         System.out.println(addBrackets(content, index));
@@ -116,12 +114,11 @@ public class Evaluator {
 
     public static String run(String content, String result) {
         //原内容和背诵结果
-        Evaluator evaluator = new Evaluator();
-        System.out.println(evaluator.PoemEvaluateRate(result, content));
+        System.out.println(PoemEvaluateRate(result, content));
 
-        System.out.println(evaluator.PinyinTransform(content));
-        List<String> pinyinList = evaluator.PinyinTransform(content);
-        List<String> hapinyinList = evaluator.PinyinTransform(result);
+        System.out.println(PinyinTransform(content));
+        List<String> pinyinList = PinyinTransform(content);
+        List<String> hapinyinList = PinyinTransform(result);
         List<Integer> index = getMatchingIndexes(pinyinList, hapinyinList);
         String Result = addBrackets(content, index);
         String CorrectRate = PoemEvaluateRate(result, content);
