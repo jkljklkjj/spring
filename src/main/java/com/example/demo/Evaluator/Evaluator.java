@@ -101,7 +101,7 @@ public class Evaluator {
     public static void main(String[] args) {
         //新知识点：可以在一个类里面直接创建主函数来进行测试
         String content = "白日依山尽，黄河入海流。欲穷千里目，更上一层楼。";
-        String result = "白日依山尽。黄河入海流，欲穷千里目，哈上一层楼。";//这里是背诵结果
+        String result = "白日依山尽。黄河入海流，欲穷千里目，上一层楼。";//这里是背诵结果
         System.out.println(PoemEvaluateRate(result, content));
 
         System.out.println(PinyinTransform(content));
@@ -116,11 +116,11 @@ public class Evaluator {
         //原内容和背诵结果
         System.out.println(PoemEvaluateRate(result, content));
 
-        System.out.println(PinyinTransform(content));
         List<String> pinyinList = PinyinTransform(content);
         List<String> hapinyinList = PinyinTransform(result);
         List<Integer> index = getMatchingIndexes(pinyinList, hapinyinList);
         String Result = addBrackets(content, index);
+        System.out.println(Result);
         String CorrectRate = PoemEvaluateRate(result, content);
         return CorrectRate+ " " + Result;
     }

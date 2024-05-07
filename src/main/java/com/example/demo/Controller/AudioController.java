@@ -1,24 +1,23 @@
 package com.example.demo.Controller;
 
+import com.example.demo.Evaluator.Evaluator;
 import com.example.demo.Speech.VoiceToText;
-import java.util.concurrent.CountDownLatch;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.example.demo.Evaluator.Evaluator;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.CountDownLatch;
 
 import static com.example.demo.Crawler.PoemCrawler.crawlPoem;
 
 @RestController
 public class AudioController {
-    private Evaluator evaluator = new Evaluator();
     private static String content;
     private VoiceToText voiceToText = new VoiceToText();
     private CountDownLatch latch = new CountDownLatch(1);
@@ -47,7 +46,15 @@ public class AudioController {
             return "Error occurred while running VoiceToText";
         }
         String result = voiceToText.getResult();
+        System.out.println(result);
         return Evaluator.run(content, result);
+    }
+
+    @GetMapping("/score")
+    public String getScore(@RequestParam String score) {
+        System.out.println("接收到分数文本");
+//        return ScoreExcel
+        return "1";
     }
 
     @PostMapping("/audiotest")
