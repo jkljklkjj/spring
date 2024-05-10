@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/score")
 public class ScoreController {
     private final ScoreService scoreService;
 
@@ -14,13 +15,20 @@ public class ScoreController {
         this.scoreService = scoreService;
     }
 
-    @GetMapping("/getscore/{username}")
-    public List<ScoreRecord> getScore(@PathVariable String username) {
+    @PostMapping("/get")
+    public List<ScoreRecord> getScoresByUsername(@RequestParam String username) {
         return scoreService.getScoresByUsername(username);
     }
 
-    @PostMapping("/score")
-    public ScoreRecord saveScore(@RequestBody ScoreRecord scoreRecord) {
-        return scoreService.saveScore(scoreRecord);
+    @PostMapping("/addUser")
+    public void addUser(@RequestParam String username) {
+        scoreService.addUser(username);
     }
+
+    @PostMapping("/add")
+    public void addScore(@RequestBody ScoreRecord scoreRecord) {
+        scoreService.addScore(scoreRecord);
+    }
+
+
 }
