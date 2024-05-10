@@ -81,14 +81,35 @@ public class ScoreDatabase {
         }
     }
 
-    public void addScore(ScoreRecord scoreRecord) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(url, this.username, password);
-             PreparedStatement stmt = conn.prepareStatement("INSERT INTO scores (score, exam_date, subject_name, username) VALUES (?, ?, ?, ?)")) {
-            stmt.setDouble(1, scoreRecord.getScore());
-            stmt.setDate(2, new java.sql.Date(scoreRecord.getTime().getTime()));
-            stmt.setString(3, scoreRecord.getSubject());
-            stmt.setString(4, scoreRecord.getUsername());
-            stmt.executeUpdate();
+    public void addScore(ScoreRecord scoreRecord) {
+        try (Connection conn = DriverManager.getConnection(url, this.username, password)) {
+            // 检查科目是否存在
+            String checkSql = "SELECT COUNT(*) FROM subjects WHERE subject_name = ?";
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+                checkStmt.setString(1, scoreRecord.getSubject());
+                ResultSet rs = checkStmt.executeQuery();
+                if (!rs.next() || rs.getInt(1) == 0) {
+                    // 如果科目不存在，先添加这个科目
+                    String insertSubjectSql = "INSERT INTO subjects (subject_name) VALUES (?)";
+                    try (PreparedStatement insertSubjectStmt = conn.prepareStatement(insertSubjectSql)) {
+                        insertSubjectStmt.setString(1, scoreRecord.getSubject());
+                        insertSubjectStmt.executeUpdate();
+                    }
+                }
+            }
+
+            // 添加分数
+            String insertScoreSql = "INSERT INTO scores (score, exam_date, subject_name, username) VALUES (?, ?, ?, ?)";
+            try (PreparedStatement insertScoreStmt = conn.prepareStatement(insertScoreSql)) {
+                insertScoreStmt.setDouble(1, scoreRecord.getScore());
+                insertScoreStmt.setDate(2, new java.sql.Date(scoreRecord.getTime().getTime()));
+                insertScoreStmt.setString(3, scoreRecord.getSubject());
+                insertScoreStmt.setString(4, scoreRecord.getUsername());
+                insertScoreStmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            // handle exception
+            e.printStackTrace();
         }
     }
 

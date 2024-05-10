@@ -77,9 +77,4 @@ public class AudioController {
         return content;
     }
 
-    @GetMapping("/test")
-    public String test() throws IOException {
-        System.out.println("test");
-        return crawlPoem("静夜思");
-    }
 }

@@ -36,12 +36,8 @@ public class ScoreService {
     }
 
     public void addScore(ScoreRecord scoreRecord) {
-        try {//添加分数
-            scoreRecordRepository.addScore(scoreRecord);
-        } catch (SQLException e) {
-            // handle exception
-            e.printStackTrace();
-        }
+        //添加分数
+        scoreRecordRepository.addScore(scoreRecord);
     }
 
 //    public ScoreRecord saveScore(ScoreRecord scoreRecord) {
