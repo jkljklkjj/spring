@@ -1,22 +1,19 @@
 package com.example.demo.Repository;
 
+import com.example.demo.Map.GlobalValue;
 import com.example.demo.Map.ScoreRecord;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Repository
 public class ScoreDatabase {
-    @Value("${spring.datasource.url}")
-    private String url;
-    @Value("${spring.datasource.username}")
-    private String username;
-    @Value("${spring.datasource.password}")
-    private String password;
+    private final String url = GlobalValue.url;
+    private final String username = GlobalValue.username;
+    private final String password = GlobalValue.password;
 
     @PostConstruct
     public void init_Database() {
