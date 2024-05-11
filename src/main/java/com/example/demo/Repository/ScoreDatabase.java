@@ -90,14 +90,9 @@ public class ScoreDatabase {
                 ResultSet rs = checkStmt.executeQuery();
                 if (!rs.next() || rs.getInt(1) == 0) {
                     // 如果科目不存在，先添加这个科目
-                    String insertSubjectSql = "INSERT INTO subjects (subject_name) VALUES (?)";
-                    try (PreparedStatement insertSubjectStmt = conn.prepareStatement(insertSubjectSql)) {
-                        insertSubjectStmt.setString(1, scoreRecord.getSubject());
-                        insertSubjectStmt.executeUpdate();
-                    }
+                    addSubject(scoreRecord.getSubject());
                 }
             }
-
             // 添加分数
             String insertScoreSql = "INSERT INTO scores (score, exam_date, subject_name, username) VALUES (?, ?, ?, ?)";
             try (PreparedStatement insertScoreStmt = conn.prepareStatement(insertScoreSql)) {

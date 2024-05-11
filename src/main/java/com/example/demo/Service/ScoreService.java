@@ -16,6 +16,11 @@ public class ScoreService {
         this.scoreRecordRepository = scoreRecordRepository;
     }
 
+    public static void main(String[] args) {
+        ScoreDatabase scoreRecordRepository = new ScoreDatabase();
+        scoreRecordRepository.init_Database();
+    }
+
     public List<ScoreRecord> getScoresByUsername(String username) {
         try {
             return scoreRecordRepository.selectScores(username);
