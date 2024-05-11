@@ -46,6 +46,7 @@ public class ScoreDatabase {
     }
 
     public void addUser(String username) throws SQLException {
+        System.out.println("addUser");
         try (Connection conn = DriverManager.getConnection(url, this.username, password);
              PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (username) VALUES (?)")) {
             stmt.setString(1, username);
@@ -53,13 +54,14 @@ public class ScoreDatabase {
         }
     }
 
-    public void addSubject(String subjectname) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(url, this.username, password);
-             PreparedStatement stmt = conn.prepareStatement("INSERT INTO subjects (subject_name) VALUES (?)")) {
-            stmt.setString(1, subjectname);
-            stmt.executeUpdate();
-        }
+    public void addSubject(String subjectname, String username) throws SQLException {
+    try (Connection conn = DriverManager.getConnection(url, this.username, password);
+         PreparedStatement stmt = conn.prepareStatement("INSERT INTO subjects (subject_name, username) VALUES (?, ?)")) {
+        stmt.setString(1, subjectname);
+        stmt.setString(2, username);
+        stmt.executeUpdate();
     }
+}
 
     public void deleteUser(String username) throws SQLException {
         try (Connection conn = DriverManager.getConnection(url, this.username, password);
@@ -80,23 +82,38 @@ public class ScoreDatabase {
 
     public void addScore(ScoreRecord scoreRecord) {
         try (Connection conn = DriverManager.getConnection(url, this.username, password)) {
+            String username = scoreRecord.getUsername();
+            String subject = scoreRecord.getSubject();
+            double score = scoreRecord.getScore();
+
+            // 检查用户是否存在
+            String checkUserSql = "SELECT COUNT(*) FROM users WHERE username = ?";
+            try (PreparedStatement checkUserStmt = conn.prepareStatement(checkUserSql)) {
+                checkUserStmt.setString(1, username);
+                ResultSet rs = checkUserStmt.executeQuery();
+                if (!rs.next() || rs.getInt(1) == 0) {
+                    System.out.println("User not found");
+                    // 如果用户不存在，先添加这个用户
+                    addUser(username);
+                }
+            }
             // 检查科目是否存在
-            String checkSql = "SELECT COUNT(*) FROM subjects WHERE subject_name = ?";
-            try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
-                checkStmt.setString(1, scoreRecord.getSubject());
-                ResultSet rs = checkStmt.executeQuery();
+            String checkSubjectSql = "SELECT COUNT(*) FROM subjects WHERE subject_name = ?";
+            try (PreparedStatement checkSubjectStmt = conn.prepareStatement(checkSubjectSql)) {
+                checkSubjectStmt.setString(1, subject);
+                ResultSet rs = checkSubjectStmt.executeQuery();
                 if (!rs.next() || rs.getInt(1) == 0) {
                     // 如果科目不存在，先添加这个科目
-                    addSubject(scoreRecord.getSubject());
+                    addSubject(subject, username);
                 }
             }
             // 添加分数
             String insertScoreSql = "INSERT INTO scores (score, exam_date, subject_name, username) VALUES (?, ?, ?, ?)";
             try (PreparedStatement insertScoreStmt = conn.prepareStatement(insertScoreSql)) {
-                insertScoreStmt.setDouble(1, scoreRecord.getScore());
+                insertScoreStmt.setDouble(1, score);
                 insertScoreStmt.setDate(2, new java.sql.Date(scoreRecord.getTime().getTime()));
-                insertScoreStmt.setString(3, scoreRecord.getSubject());
-                insertScoreStmt.setString(4, scoreRecord.getUsername());
+                insertScoreStmt.setString(3, subject);
+                insertScoreStmt.setString(4, username);
                 insertScoreStmt.executeUpdate();
             }
         } catch (SQLException e) {

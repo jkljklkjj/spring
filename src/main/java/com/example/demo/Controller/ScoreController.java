@@ -27,8 +27,8 @@ public class ScoreController {
 
     @PostMapping("/add")
     public void addScore(@RequestBody ScoreRecord scoreRecord) {
+
         scoreService.addScore(scoreRecord);
     }
-
 
 }

@@ -7,10 +7,20 @@ import java.sql.Date;
 @Entity
 public class ScoreRecord {
     @Id
-    private String username;
+    private String username = "testUser";
     private String subject;
     private double score;
     private Date time;
+
+    @Override
+    public String toString() {
+        return "ScoreRecord{" +
+                "username='" + username + '\'' +
+                ", subject='" + subject + '\'' +
+                ", score=" + score +
+                ", time=" + time +
+                '}';
+    }
 
     // getters and setters
     public void setSubject(String subject) {
@@ -27,10 +37,6 @@ public class ScoreRecord {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public void setsubject(String subject) {
-        this.subject = subject;
     }
 
     public double getScore() {
