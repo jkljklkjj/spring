@@ -15,8 +15,9 @@ public class ScoreController {
         this.scoreService = scoreService;
     }
 
-    @PostMapping("/get")
+    @GetMapping("/get")
     public List<ScoreRecord> getScoresByUsername(@RequestParam String username) {
+        System.out.println(username);
         return scoreService.getScoresByUsername(username);
     }
 

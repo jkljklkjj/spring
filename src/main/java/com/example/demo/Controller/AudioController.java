@@ -1,7 +1,7 @@
 package com.example.demo.Controller;
 
 import com.example.demo.Evaluator.Evaluator;
-import com.example.demo.Speech.VoiceToText;
+import com.example.demo.Api.VoiceToText;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,13 +48,6 @@ public class AudioController {
         String result = voiceToText.getResult();
         System.out.println(result);
         return Evaluator.run(content, result);
-    }
-
-    @GetMapping("/score")
-    public String getScore(@RequestParam String score) {
-        System.out.println("接收到分数文本");
-//        return ScoreExcel
-        return "1";
     }
 
     @PostMapping("/audiotest")
