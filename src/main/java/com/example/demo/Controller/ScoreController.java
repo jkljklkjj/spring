@@ -21,10 +21,6 @@ public class ScoreController {
         return scoreService.getScoresByUsername(username);
     }
 
-    @PostMapping("/addUser")
-    public void addUser(@RequestParam String username) {
-        scoreService.addUser(username);
-    }
 
     @PostMapping("/add")
     public void addScore(@RequestBody ScoreRecord scoreRecord) {

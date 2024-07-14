@@ -31,15 +31,6 @@ public class ScoreService {
         }
     }
 
-    public void addUser(String username) {
-        try {//添加用户
-            scoreRecordRepository.addUser(username);
-        } catch (SQLException e) {
-            // handle exception
-            e.printStackTrace();
-        }
-    }
-
     public void addScore(ScoreRecord scoreRecord) {
         //添加分数
         scoreRecordRepository.addScore(scoreRecord);

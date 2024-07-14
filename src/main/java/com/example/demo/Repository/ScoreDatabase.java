@@ -9,6 +9,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.demo.Repository.Login;
+
 @Repository
 public class ScoreDatabase {
     private final String url = GlobalValue.url;
@@ -28,7 +30,7 @@ public class ScoreDatabase {
             Statement stmt = conn.createStatement();
 
             // 执行SQL语句来创建用户表
-            stmt.execute("CREATE TABLE IF NOT EXISTS users (username VARCHAR(50) PRIMARY KEY)");
+            stmt.execute("CREATE TABLE IF NOT EXISTS users (username VARCHAR(50) PRIMARY KEY, password VARCHAR(255))");
 
             // 执行SQL语句来创建科目表
             stmt.execute("CREATE TABLE IF NOT EXISTS subjects (subject_name VARCHAR(50), username VARCHAR(50), PRIMARY KEY (subject_name, username), FOREIGN KEY (username) REFERENCES users(username))");
@@ -42,15 +44,6 @@ public class ScoreDatabase {
             // 如果连接失败，打印出错误消息
             System.out.println("Failed to create the database.");
             e.printStackTrace();
-        }
-    }
-
-    public void addUser(String username) throws SQLException {
-        System.out.println("addUser");
-        try (Connection conn = DriverManager.getConnection(url, this.username, password);
-             PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (username) VALUES (?)")) {
-            stmt.setString(1, username);
-            stmt.executeUpdate();
         }
     }
 
@@ -86,17 +79,6 @@ public class ScoreDatabase {
             String subject = scoreRecord.getSubject();
             double score = scoreRecord.getScore();
 
-            // 检查用户是否存在
-            String checkUserSql = "SELECT COUNT(*) FROM users WHERE username = ?";
-            try (PreparedStatement checkUserStmt = conn.prepareStatement(checkUserSql)) {
-                checkUserStmt.setString(1, username);
-                ResultSet rs = checkUserStmt.executeQuery();
-                if (!rs.next() || rs.getInt(1) == 0) {
-                    System.out.println("User not found");
-                    // 如果用户不存在，先添加这个用户
-                    addUser(username);
-                }
-            }
             // 检查科目是否存在
             String checkSubjectSql = "SELECT COUNT(*) FROM subjects WHERE subject_name = ?";
             try (PreparedStatement checkSubjectStmt = conn.prepareStatement(checkSubjectSql)) {
