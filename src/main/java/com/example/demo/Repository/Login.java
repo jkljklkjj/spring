@@ -77,7 +77,7 @@ public class Login {
             }
 
             // 检查用户名和密码是否匹配
-            try (PreparedStatement loginStmt = conn.prepareStatement("SELECT * FROM passwords WHERE username = ? AND password = ?")) {
+            try (PreparedStatement loginStmt = conn.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?")) {
                 loginStmt.setString(1, user_name);
                 loginStmt.setString(2, pass_word);
                 ResultSet loginRs = loginStmt.executeQuery();
