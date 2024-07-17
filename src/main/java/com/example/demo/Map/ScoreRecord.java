@@ -7,7 +7,7 @@ import java.sql.Date;
 @Entity
 public class ScoreRecord {
     @Id
-    private String username = "testUser";
+    private String username;
     private String subject;
     private double score;
     private Date time;

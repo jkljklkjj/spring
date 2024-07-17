@@ -49,18 +49,18 @@ public class Login {
             checkUserExists.setString(1, user_name);
             ResultSet rs = checkUserExists.executeQuery();
             if (rs.next()) {
-                return "用户名已存在";
+                return "user already exists";
             }
 
             // 在实际应用中，应对密码进行加密处理
             stmt.setString(1, user_name);
             stmt.setString(2, pass_word);
             stmt.executeUpdate();
-            return "注册成功";
+            return "success";
         } catch (SQLException e) {
             System.out.println("Failed to add user.");
             e.printStackTrace();
-            return "注册失败";
+            return "failed";
         }
     }
 
@@ -72,7 +72,7 @@ public class Login {
                 checkUserStmt.setString(1, user_name);
                 ResultSet userRs = checkUserStmt.executeQuery();
                 if (!userRs.next()) {
-                    return "用户不存在";
+                    return "user don't exist";
                 }
             }
 
@@ -82,13 +82,13 @@ public class Login {
                 loginStmt.setString(2, pass_word);
                 ResultSet loginRs = loginStmt.executeQuery();
                 if (loginRs.next()) {
-                    return "登陆成功";
+                    return "success";
                 } else {
-                    return "密码不正确";
+                    return "password incorrect";
                 }
             }
         } catch (SQLException e) {
-            System.out.println("登陆失败");
+            System.out.println("Failed to login.");
             e.printStackTrace();
             return "Failed to login due to an error.";
         }
